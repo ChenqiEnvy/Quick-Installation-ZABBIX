@@ -24,7 +24,7 @@ useradd -g zabbix zabbix
 sleep 5
 
 echo "安装zabbix源"
-rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/8/x86_64/zabbix-release-4.4-1.el7.noarch.rpm
+rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm
 
 echo "安装zabbix、mysql、apache、php等相关组件"
 yum clean all
