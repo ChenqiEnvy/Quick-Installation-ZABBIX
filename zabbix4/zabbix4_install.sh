@@ -1,5 +1,4 @@
 #!/bin/sh
-echo "脚本作者:火星小刘 web:www.huoxingxiaoliu.com email:xtlyk@163.com"
 
 zabbixdir=`pwd`
 ip=`ip address |grep inet |grep -v inet6 |grep -v 127.0.0.1 |awk '{print $2}' |awk -F "/" '{print $1}'`
@@ -25,20 +24,21 @@ useradd -g zabbix zabbix
 sleep 5
 
 echo "安装zabbix源"
-rpm -i https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm
+rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/8/x86_64/zabbix-release-4.4-1.el8.noarch.rpm
 
 echo "安装zabbix、mysql、apache、php等相关组件"
+yum clean all
 yum install zabbix-server-mysql zabbix-web-mysql zabbix-agent mariadb mariadb-devel mariadb-server -y
 
-echo "设置数据库root密码,默认为123321"
+echo "设置数据库root密码,默认为 Zabbix"
 sleep 3
 systemctl start mariadb.service
-mysqladmin  -uroot password "123321"
+mysqladmin  -uroot password "Zabbix"
 
 echo "创建zabbix数据库，和用户名密码"
-echo "create database zabbix character set utf8 collate utf8_bin;" | mysql -uroot -p123321
-echo "grant all privileges on zabbix.* to zabbix@'localhost' identified by 'zabbix';" | mysql -uroot -p123321
-echo "flush privileges;" | mysql -uroot -p123321
+echo "create database zabbix character set utf8 collate utf8_bin;" | mysql -uroot -pZabbix
+echo "grant all privileges on zabbix.* to zabbix@'localhost' identified by 'zabbix';" | mysql -uroot -pZabbix
+echo "flush privileges;" | mysql -uroot -pZabbix
 
 echo "导入数据库"
 zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -pzabbix zabbix
@@ -82,7 +82,7 @@ echo "启动服务，设置开机启动"
 systemctl restart zabbix-server zabbix-agent httpd
 systemctl enable zabbix-server zabbix-agent httpd mariadb
 
-echo "数据库默认root密码 : zabbix123321;"
+echo "数据库默认root密码 : zabbixZabbix;"
 echo "zabbix 数据库名称、zabbix连接数据库用户名:zabbix、zabbix连接数据库密码:zabbix"
 echo "zabbix web 用户名：Admin、密码：zabbix"
 echo "打开http://$ip/zabbix，进行下一步安装"
